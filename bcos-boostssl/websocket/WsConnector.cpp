@@ -78,6 +78,29 @@ void WsConnector::connectToWsServer(const std::string& _host, uint16_t _port,
 }
 
 /**
+ * @brief: connect to the server
+ * @param _host: the remote server host, support ipv4, ipv6, domain name
+ * @param _port: the remote server port
+ * @param _callback:
+ * @return void:
+ */
+std::future<std::pair<boost::beast::error_code, std::shared_ptr<WsStream>>>
+WsConnector::connectToWsServer(const std::string& _host, uint16_t _port)
+{
+    auto p = std::make_shared<
+        std::promise<std::pair<boost::beast::error_code, std::shared_ptr<WsStream>>>>();
+
+    connectToWsServer(
+        _host, _port, [p](boost::beast::error_code _error, std::shared_ptr<WsStream> _ws) {
+            auto result =
+                std::make_shared<std::pair<boost::beast::error_code, std::shared_ptr<WsStream>>>(
+                    _error, _ws);
+            p.set_value(result);
+        });
+    return p.get_future();
+}
+
+/**
  * @brief:
  * @param _host: the remote server host, support ipv4, ipv6, domain name
  * @param _port: the remote server port
