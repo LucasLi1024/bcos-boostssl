@@ -89,6 +89,7 @@ std::shared_ptr<boost::asio::ssl::context> ContextBuilder::buildSslContext(
 
     auto keyContent =
         readFileContent(boost::filesystem::path(_certConfig.nodeKey));  // node.key content
+
     boost::asio::const_buffer keyBuffer(keyContent->data(), keyContent->size());
     sslContext->use_private_key(keyBuffer, boost::asio::ssl::context::file_format::pem);
 
@@ -123,6 +124,7 @@ std::shared_ptr<boost::asio::ssl::context> ContextBuilder::buildSslContext(
         readFileContent(boost::filesystem::path(_smCertConfig.nodeKey));  // node.key content
 
     boost::asio::const_buffer keyBuffer(keyContent->data(), keyContent->size());
+
     sslContext->use_private_key(keyBuffer, boost::asio::ssl::context::file_format::pem);
 
     int ret = 0;

@@ -56,12 +56,27 @@ void ContextConfig::initConfig(std::string const& _configPath)
 /// loads ca configuration items from the configuration file
 void ContextConfig::initCertConfig(const boost::property_tree::ptree& _pt)
 {
-    std::string caPath = _pt.get<std::string>("cert.ca_path", "./");
-    std::string caCertFile = caPath + "/" + _pt.get<std::string>("cert.ca_cert", "ca.crt");
-    std::string nodeCertFile = caPath + "/" + _pt.get<std::string>("cert.node_cert", "node.crt");
-    std::string nodeKeyFile = caPath + "/" + _pt.get<std::string>("cert.node_key", "node.key");
+    /*
+    [cert]
+      ; directory the certificates located in
+      ca_path=./
+      ; the ca certificate file
+      ca_cert=ca.crt
+      ; the node private key file
+      node_key=ssl.key
+      ; the node certificate file
+      node_cert=ssl.crt
+    */
+    if (m_certPath.size() == 0)
+    {
+        m_certPath = _pt.get<std::string>("cert.ca_path", "./");
+    }
+    std::string caCertFile = m_certPath + "/" + _pt.get<std::string>("cert.ca_cert", "ca.crt");
+    std::string nodeCertFile =
+        m_certPath + "/" + _pt.get<std::string>("cert.node_cert", "node.crt");
+    std::string nodeKeyFile = m_certPath + "/" + _pt.get<std::string>("cert.node_key", "node.key");
 
-    CONTEXT_LOG(INFO) << LOG_DESC("initCertConfig") << LOG_KV("ca_path", caPath)
+    CONTEXT_LOG(INFO) << LOG_DESC("initCertConfig") << LOG_KV("ca_path", m_certPath)
                       << LOG_KV("ca_cert", caCertFile) << LOG_KV("node_cert", nodeCertFile)
                       << LOG_KV("node_key", nodeKeyFile);
 
@@ -84,16 +99,35 @@ void ContextConfig::initCertConfig(const boost::property_tree::ptree& _pt)
 // loads sm ca configuration items from the configuration file
 void ContextConfig::initSMCertConfig(const boost::property_tree::ptree& _pt)
 {
-    std::string caPath = _pt.get<std::string>("cert.ca_path", "./");
-    std::string smCaCertFile = caPath + "/" + _pt.get<std::string>("cert.sm_ca_cert", "sm_ca.crt");
+    /*
+    [cert]
+    ; directory the certificates located in
+    ca_path=./
+    ; the ca certificate file
+    sm_ca_cert=sm_ca.crt
+    ; the node private key file
+    sm_node_key=sm_ssl.key
+    ; the node certificate file
+    sm_node_cert=sm_ssl.crt
+    ; the node private key file
+    sm_ennode_key=sm_enssl.key
+    ; the node certificate file
+    sm_ennode_cert=sm_enssl.crt
+    */
+    if (m_certPath.size() == 0)
+    {
+        m_certPath = _pt.get<std::string>("cert.ca_path", "./");
+    }
+    std::string smCaCertFile =
+        m_certPath + "/" + _pt.get<std::string>("cert.sm_ca_cert", "sm_ca.crt");
     std::string smNodeCertFile =
-        caPath + "/" + _pt.get<std::string>("cert.sm_node_cert", "sm_node.crt");
+        m_certPath + "/" + _pt.get<std::string>("cert.sm_node_cert", "sm_node.crt");
     std::string smNodeKeyFile =
-        caPath + "/" + _pt.get<std::string>("cert.sm_node_key", "sm_node.key");
+        m_certPath + "/" + _pt.get<std::string>("cert.sm_node_key", "sm_node.key");
     std::string smEnNodeCertFile =
-        caPath + "/" + _pt.get<std::string>("cert.sm_ennode_cert", "sm_ennode.crt");
+        m_certPath + "/" + _pt.get<std::string>("cert.sm_ennode_cert", "sm_ennode.crt");
     std::string smEnNodeKeyFile =
-        caPath + "/" + _pt.get<std::string>("cert.sm_ennode_key", "sm_ennode.key");
+        m_certPath + "/" + _pt.get<std::string>("cert.sm_ennode_key", "sm_ennode.key");
 
     checkFileExist(smCaCertFile);
     checkFileExist(smNodeCertFile);
@@ -110,7 +144,7 @@ void ContextConfig::initSMCertConfig(const boost::property_tree::ptree& _pt)
 
     m_smCertConfig = smCertConfig;
 
-    CONTEXT_LOG(INFO) << LOG_DESC("initSMCertConfig") << LOG_KV("ca_path", caPath)
+    CONTEXT_LOG(INFO) << LOG_DESC("initSMCertConfig") << LOG_KV("ca_path", m_certPath)
                       << LOG_KV("sm_ca_cert", smCertConfig.caCert)
                       << LOG_KV("sm_node_cert", smCertConfig.nodeCert)
                       << LOG_KV("sm_node_key", smCertConfig.nodeKey)

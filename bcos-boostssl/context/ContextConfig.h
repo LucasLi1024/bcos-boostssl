@@ -70,6 +70,9 @@ public:
     const SMCertConfig& smCertConfig() const { return m_smCertConfig; }
     void setSmCertConfig(const SMCertConfig& _smCertConfig) { m_smCertConfig = _smCertConfig; }
 
+    std::string const& certPath() const { return m_certPath; }
+    void setCertPath(std::string const& _certPath) { m_certPath = _certPath; }
+
     std::string moduleName() { return m_moduleName; }
     void setModuleName(std::string _moduleName) { m_moduleName = _moduleName; }
 
@@ -82,6 +85,7 @@ private:
     // cert config for ssl
     CertConfig m_certConfig;
     SMCertConfig m_smCertConfig;
+    std::string m_certPath;
     std::string m_moduleName = "DEFAULT";
 };
 
