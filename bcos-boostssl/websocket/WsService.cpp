@@ -68,6 +68,7 @@ void WsService::start()
     {
         m_timerFactory = std::make_shared<timer::TimerFactory>();
     }
+    m_timerFactory->startThread();
 
     // start ioc thread
     if (m_ioservicePool)
@@ -133,12 +134,6 @@ void WsService::stop()
     }
     m_running = false;
 
-    // stop ioc thread
-    if (m_ioservicePool)
-    {
-        m_ioservicePool->stop();
-    }
-
     if (m_statTimer)
     {
         m_statTimer->stop();
@@ -147,6 +142,22 @@ void WsService::stop()
     if (m_reconnectTimer)
     {
         m_reconnectTimer->stop();
+    }
+
+    // stop ioc thread
+    if (m_ioservicePool)
+    {
+        m_ioservicePool->stop();
+    }
+
+    if (m_threadPool)
+    {
+        m_threadPool->stop();
+    }
+
+    if (m_timerFactory)
+    {
+        m_timerFactory->stopThread();
     }
 
     WEBSOCKET_SERVICE(INFO) << LOG_BADGE("stop") << LOG_DESC("stop websocket service successfully");
